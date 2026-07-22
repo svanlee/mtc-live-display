@@ -1,0 +1,75 @@
+name: Validate & Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate HTML & CSS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate HTML (html-validate)
+        run: |
+          npm install --no-save html-validate
+          npx html-validate index.html || echo "::warning::HTML validation reported issues (non-blocking)."
+
+      - name: Validate CSS (stylelint)
+        run: |
+          npm install --no-save stylelint stylelint-config-standard
+          echo '{ "extends": "stylelint-config-standard", "rules": { "no-descending-specificity": null } }' > .stylelintrc.json
+          npx stylelint "style.css" || echo "::warning::CSS validation reported issues (non-blocking)."
+
+  deploy:
+    name: Regenerate Manifests & Deploy to GitHub Pages
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Regenerate image & media manifests
+        run: |
+          ls images | grep -E '\.(jpg|jpeg|png|webp|gif|svg)$' | \
+            python3 -c "import json,sys; print(json.dumps(sorted(l.strip() for l in sys.stdin)))" \
+            > images/manifest.json
+          if ls media | grep -qE '\.(mp4|webm)$'; then
+            ls media | grep -E '\.(mp4|webm)$' | \
+              python3 -c "import json,sys; print(json.dumps(sorted(l.strip() for l in sys.stdin)))" \
+              > media/manifest.json
+          else
+            echo "[]" > media/manifest.json
+          fi
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
