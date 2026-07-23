@@ -33,13 +33,13 @@ window.MTC_CONFIG = {
     // the default fit-to-viewport (never crops, may letterbox).
     fillScreenImages: [
       "estate-jewelry-01.jpg", "jewelry-01.jpg", "rare-coins-04.jpg", "store-interior-01.jpg",
-      "silver-bars-01.jpg", "coin-collections-01.jpg",
-      "morgan-dollars-02.jpg",
+      "silver-bars-01.jpg", "coin-collections-01.jpg", "rare-coins-05.jpg",
     ],
     // Per-filename background-position override for fill-screen images, when
     // centering crops out the interesting part of the photo.
     imagePosition: {
-      "store-interior-01.jpg": "center 80%",
+      "store-interior-01.jpg": "center 68%",
+      "rare-coins-05.jpg": "center top",
     },
   },
 

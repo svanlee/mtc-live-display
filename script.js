@@ -275,6 +275,7 @@
     if (promo.image) {
       div.classList.add("slide--promo-image");
       div.style.backgroundImage = `url("${promo.image}")`;
+      if (promo.imagePosition) div.style.backgroundPosition = promo.imagePosition;
     }
     div.innerHTML = `
       <div class="promo-card">
