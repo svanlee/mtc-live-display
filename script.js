@@ -178,10 +178,10 @@
   // ---------------- SLIDESHOW (images + video + promos) ----------------
   const FALLBACK_IMAGE_LIST = [
     "gold-bars-01.jpg", "gold-bars-02.svg", "silver-bars-01.jpg", "silver-bars-02.jpg",
-    "american-eagles-01.svg", "american-eagles-02.svg", "morgan-dollars-01.jpg", "morgan-dollars-02.jpg",
+    "american-eagles-01.jpg", "american-eagles-02.jpg", "american-eagles-03.jpg", "morgan-dollars-01.jpg", "morgan-dollars-02.jpg",
     "peace-dollars-01.jpg", "rare-coins-01.jpg", "rare-coins-02.jpg", "jewelry-01.jpg", "jewelry-02.svg",
     "luxury-watches-01.jpg", "luxury-watches-02.svg", "estate-jewelry-01.jpg",
-    "coin-collections-01.svg", "bullion-01.svg", "currency-01.jpg", "coin-cases-01.svg", "store-interior-01.jpg",
+    "coin-collections-01.jpg", "coin-collections-02.jpg", "bullion-01.svg", "currency-01.jpg", "coin-cases-01.svg", "store-interior-01.jpg",
   ];
 
   function captionFromFilename(filename) {
