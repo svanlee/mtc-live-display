@@ -110,7 +110,7 @@ html, body {
 /* RESPONSIVE */
 @media (min-width: 3000px) { html { font-size: 20px; } }
 @media (max-width: 900px) {
-  .header { grid-template-columns: 1fr; }
+  .header { grid-template-columns: 1fr; height: auto; }
   .metal-row { grid-template-columns: 1fr 1fr; }
   #clock-panel { grid-column: 1 / -1; order: -1; border-left: none !important; border-bottom: 1px solid var(--divider); padding-bottom: 0.6em; }
   .metal-panel + .metal-panel { border-left: 1px solid var(--divider); }
