@@ -33,9 +33,10 @@ html, body {
 
 /* HEADER */
 .header {
-  height: var(--header-h); min-height: 130px;
+  height: auto; min-height: max(130px, var(--header-h));
   display: grid; grid-template-columns: 1fr 1.1fr 1fr;
   align-items: stretch; border-bottom: 1px solid var(--divider); position: relative;
+  padding-bottom: 0.6em;
 }
 .header::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
@@ -110,7 +111,7 @@ html, body {
 /* RESPONSIVE */
 @media (min-width: 3000px) { html { font-size: 20px; } }
 @media (max-width: 900px) {
-  .header { grid-template-columns: 1fr; height: auto; }
+  .header { grid-template-columns: 1fr; }
   .metal-row { grid-template-columns: 1fr 1fr; }
   #clock-panel { grid-column: 1 / -1; order: -1; border-left: none !important; border-bottom: 1px solid var(--divider); padding-bottom: 0.6em; }
   .metal-panel + .metal-panel { border-left: 1px solid var(--divider); }
