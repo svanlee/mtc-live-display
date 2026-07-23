@@ -31,7 +31,16 @@ window.MTC_CONFIG = {
     videoFrequency: 4, // 1 video slide every N regular slides (0 = off)
     // Filenames listed here fill the screen edge-to-edge (may crop) instead of
     // the default fit-to-viewport (never crops, may letterbox).
-    fillScreenImages: ["estate-jewelry-01.jpg", "jewelry-01.jpg", "rare-coins-04.jpg", "store-interior-01.jpg"],
+    fillScreenImages: [
+      "estate-jewelry-01.jpg", "jewelry-01.jpg", "rare-coins-04.jpg", "store-interior-01.jpg",
+      "silver-bars-01.jpg", "coin-collections-01.jpg",
+      "morgan-dollars-02.jpg",
+    ],
+    // Per-filename background-position override for fill-screen images, when
+    // centering crops out the interesting part of the photo.
+    imagePosition: {
+      "store-interior-01.jpg": "center 80%",
+    },
   },
 
   promotions: {

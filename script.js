@@ -181,7 +181,7 @@
     "american-eagles-01.jpg", "american-eagles-02.jpg", "american-eagles-03.jpg", "morgan-dollars-01.jpg", "morgan-dollars-02.jpg",
     "peace-dollars-01.jpg", "rare-coins-01.jpg", "rare-coins-02.jpg", "rare-coins-03.jpg", "rare-coins-04.jpg", "rare-coins-05.jpg", "jewelry-01.jpg",
     "luxury-watches-01.jpg", "estate-jewelry-01.jpg",
-    "coin-collections-01.jpg", "currency-01.jpg", "currency-02.jpg", "store-interior-01.jpg",
+    "coin-collections-01.jpg", "store-interior-01.jpg",
   ];
 
   function captionFromFilename(filename) {
@@ -243,6 +243,8 @@
     const filename = src.split("/").pop();
     const fillList = (CFG.slideshow && CFG.slideshow.fillScreenImages) || [];
     if (fillList.includes(filename)) div.classList.add("slide--image-fill");
+    const positionMap = (CFG.slideshow && CFG.slideshow.imagePosition) || {};
+    if (positionMap[filename]) div.style.backgroundPosition = positionMap[filename];
     div.style.backgroundImage = `url("${src}")`;
     const caption = document.createElement("div");
     caption.className = "slide-caption";
