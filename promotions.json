@@ -29,7 +29,8 @@
       "subtext": "New rare coin arrivals from the collector's show now on display.",
       "badge": "NEW ARRIVALS",
       "startDate": "2026-06-01",
-      "endDate": "2026-08-31"
+      "endDate": "2026-08-31",
+      "image": "assets/promotions/summer-coin-show.jpg"
     }
   ]
 }

@@ -181,7 +181,7 @@
     "american-eagles-01.jpg", "american-eagles-02.jpg", "american-eagles-03.jpg", "morgan-dollars-01.jpg", "morgan-dollars-02.jpg",
     "peace-dollars-01.jpg", "rare-coins-01.jpg", "rare-coins-02.jpg", "rare-coins-03.jpg", "rare-coins-04.jpg", "rare-coins-05.jpg", "jewelry-01.jpg",
     "luxury-watches-01.jpg", "estate-jewelry-01.jpg",
-    "coin-collections-01.jpg", "coin-collections-02.jpg", "currency-01.jpg", "currency-02.jpg", "currency-03.jpg", "store-interior-01.jpg",
+    "coin-collections-01.jpg", "currency-01.jpg", "currency-02.jpg", "currency-03.jpg", "store-interior-01.jpg",
   ];
 
   function captionFromFilename(filename) {
@@ -267,6 +267,10 @@
   function buildPromoSlide(promo) {
     const div = document.createElement("div");
     div.className = "slide slide--promo";
+    if (promo.image) {
+      div.classList.add("slide--promo-image");
+      div.style.backgroundImage = `url("${promo.image}")`;
+    }
     div.innerHTML = `
       <div class="promo-card">
         ${promo.badge ? `<div class="promo-badge">${promo.badge}</div>` : ""}
