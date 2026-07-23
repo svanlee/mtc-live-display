@@ -19,11 +19,11 @@
     <circle cx="870" cy="480" r="6" fill="#8B6F2A"/>
   </g>
 
-  <text x="960" y="760" font-family="Georgia, 'Times New Roman', serif" font-size="52" fill="#D4AF37"
+  <text x="960" y="700" font-family="Georgia, 'Times New Roman', serif" font-size="52" fill="#D4AF37"
         text-anchor="middle" letter-spacing="6" opacity="0.95">RARE COINS</text>
-  <text x="960" y="880" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#9a9a9a"
+  <text x="960" y="760" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#9a9a9a"
         text-anchor="middle" letter-spacing="10">MORGAN TRADING COMPANY</text>
-  <text x="960" y="920" font-family="Arial, sans-serif" font-size="16" fill="#5c5c5c"
+  <text x="960" y="795" font-family="Arial, sans-serif" font-size="16" fill="#5c5c5c"
         text-anchor="middle" letter-spacing="2">ORIGINAL PLACEHOLDER ARTWORK — REPLACE IN /images</text>
   <rect x="40" y="40" width="1840" height="1000" fill="none" stroke="#8B6F2A" stroke-width="1" opacity="0.35"/>
 </svg>
