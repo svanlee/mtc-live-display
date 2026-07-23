@@ -15,7 +15,7 @@ window.MTC_CONFIG = {
     goldapi: { apiKey: "goldapi-597e29075eb7cb7f0166ce8074455e96-io", baseUrl: "https://www.goldapi.io/api" },
     metalsdev: { apiKey: "YOUR_METALS_DEV_KEY", baseUrl: "https://api.metals.dev/v1" },
     currentgold: { apiKey: "YOUR_CURRENT_GOLD_KEY", baseUrl: "https://api.current.gold/v1" },
-    refreshIntervalSeconds: 30,
+    refreshIntervalSeconds: 1800,
     retryIntervalSeconds: 15,
   },
 
