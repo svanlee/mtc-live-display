@@ -17,6 +17,7 @@ window.MTC_CONFIG = {
     currentgold: { apiKey: "YOUR_CURRENT_GOLD_KEY", baseUrl: "https://api.current.gold/v1" },
     refreshIntervalSeconds: 1800,
     retryIntervalSeconds: 15,
+    marketHours: { startHour: 9, endHour: 17 }, // 24h local time; refreshes only fetch live prices in this window
   },
 
   slideshow: {

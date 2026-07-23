@@ -94,17 +94,32 @@
     sweep.classList.add("run");
   }
 
-  function setLastUpdatedLabel(date, isOffline) {
+  function setLastUpdatedLabel(date, reason) {
     const el = document.getElementById("last-updated");
     if (!CFG.offline.showLastUpdatedLabel) return;
-    if (isOffline) {
+    if (reason) {
       const time = new Intl.DateTimeFormat(CFG.clock.locale, { hour: "2-digit", minute: "2-digit" }).format(date);
-      el.textContent = `Offline — Last Updated ${time}`;
+      const prefix = reason === "closed" ? "Market Closed" : "Offline";
+      el.textContent = `${prefix} — Last Updated ${time}`;
       el.classList.add("visible");
     } else {
       el.textContent = "";
       el.classList.remove("visible");
     }
+  }
+
+  function isMarketOpen(date) {
+    const { startHour, endHour } = CFG.api.marketHours;
+    const hour = date.getHours();
+    return hour >= startHour && hour < endHour;
+  }
+
+  function msUntilMarketOpen(date) {
+    const { startHour } = CFG.api.marketHours;
+    const next = new Date(date);
+    next.setHours(startHour, 0, 0, 0);
+    if (next <= date) next.setDate(next.getDate() + 1);
+    return next.getTime() - date.getTime();
   }
 
   function saveToCache(data) {
@@ -125,12 +140,25 @@
   }
 
   async function refreshPrices() {
+    const now = new Date();
+    if (!isMarketOpen(now)) {
+      const cached = loadFromCache();
+      if (cached) {
+        renderMetal("gold", cached.gold);
+        renderMetal("silver", cached.silver);
+        setLastUpdatedLabel(new Date(cached.fetchedAt), "closed");
+      } else {
+        setLastUpdatedLabel(now, "closed");
+      }
+      scheduleNext(msUntilMarketOpen(now) / 1000);
+      return;
+    }
     try {
       const data = await window.MTCPrices.fetchPrices();
       renderMetal("gold", data.gold);
       renderMetal("silver", data.silver);
       runSweep();
-      setLastUpdatedLabel(data.fetchedAt, false);
+      setLastUpdatedLabel(data.fetchedAt, null);
       saveToCache({ gold: data.gold, silver: data.silver, fetchedAt: data.fetchedAt });
       scheduleNext(CFG.api.refreshIntervalSeconds);
     } catch (err) {
@@ -139,9 +167,9 @@
       if (cached) {
         renderMetal("gold", cached.gold);
         renderMetal("silver", cached.silver);
-        setLastUpdatedLabel(new Date(cached.fetchedAt), true);
+        setLastUpdatedLabel(new Date(cached.fetchedAt), "offline");
       } else {
-        setLastUpdatedLabel(new Date(), true);
+        setLastUpdatedLabel(new Date(), "offline");
       }
       scheduleNext(CFG.api.retryIntervalSeconds);
     }
