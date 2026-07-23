@@ -179,9 +179,9 @@
   const FALLBACK_IMAGE_LIST = [
     "gold-bars-01.jpg", "silver-bars-01.jpg", "silver-bars-02.jpg",
     "american-eagles-01.jpg", "american-eagles-02.jpg", "american-eagles-03.jpg", "morgan-dollars-01.jpg", "morgan-dollars-02.jpg",
-    "peace-dollars-01.jpg", "rare-coins-01.jpg", "rare-coins-02.jpg", "jewelry-01.jpg",
+    "peace-dollars-01.jpg", "rare-coins-01.jpg", "rare-coins-02.jpg", "rare-coins-03.jpg", "jewelry-01.jpg",
     "luxury-watches-01.jpg", "estate-jewelry-01.jpg",
-    "coin-collections-01.jpg", "coin-collections-02.jpg", "currency-01.jpg", "currency-02.jpg", "currency-03.jpg", "store-interior-01.jpg",
+    "coin-collections-01.jpg", "currency-01.jpg", "currency-02.jpg", "currency-03.jpg", "store-interior-01.jpg",
   ];
 
   function captionFromFilename(filename) {
