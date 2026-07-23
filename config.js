@@ -39,7 +39,7 @@ window.MTC_CONFIG = {
     // Per-filename background-position override for fill-screen images, when
     // centering crops out the interesting part of the photo.
     imagePosition: {
-      "firearms-01.jpg": "center 75%",
+      "firearms-01.jpg": "center 55%",
     },
     // Per-filename caption text color override, for photos with a light/white
     // background where the default gold caption text is hard to read.
