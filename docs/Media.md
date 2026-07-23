@@ -2,7 +2,7 @@
 
 ## Sourcing real store photos
 
-The 22 images bundled with this project are original placeholder artwork
+The images bundled with this project started as original placeholder artwork
 (simple labeled illustrations), not photographs — that avoids any licensing
 question out of the box, but they are a stand-in only. Before going live,
 replace them with real photos. Two easy, free routes:
@@ -14,7 +14,7 @@ replace them with real photos. Two easy, free routes:
   Pexels (pexels.com) both offer photos free for commercial use with no
   attribution required. Useful search terms per category: "gold bars",
   "silver bullion", "American eagle coin", "Morgan silver dollar", "rare
-  coins collection", "fine jewelry", "diamond ring", "luxury watch", "estate
+  coins collection", "fine jewelry", "luxury watch", "estate
   jewelry", "coin collection case", "currency cash", "jewelry store
   interior". Download the files, drop them into `/images`, and regenerate
   the manifest as described below.
