@@ -29,6 +29,9 @@ window.MTC_CONFIG = {
     manifestPath: "images/manifest.json",
     videoManifestPath: "media/manifest.json",
     videoFrequency: 4, // 1 video slide every N regular slides (0 = off)
+    // Filenames listed here fill the screen edge-to-edge (may crop) instead of
+    // the default fit-to-viewport (never crops, may letterbox).
+    fillScreenImages: ["estate-jewelry-01.jpg", "jewelry-01.jpg", "rare-coins-04.jpg", "store-interior-01.jpg"],
   },
 
   promotions: {
