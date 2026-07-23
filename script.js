@@ -179,8 +179,8 @@
   const FALLBACK_IMAGE_LIST = [
     "gold-bars-01.jpg", "gold-bars-02.svg", "silver-bars-01.svg", "silver-bars-02.svg",
     "american-eagles-01.svg", "american-eagles-02.svg", "morgan-dollars-01.svg", "morgan-dollars-02.svg",
-    "peace-dollars-01.svg", "rare-coins-01.svg", "rare-coins-02.svg", "jewelry-01.jpg", "jewelry-02.svg",
-    "diamonds-01.svg", "luxury-watches-01.svg", "luxury-watches-02.svg", "estate-jewelry-01.jpg",
+    "peace-dollars-01.svg", "rare-coins-01.jpg", "rare-coins-02.jpg", "jewelry-01.jpg", "jewelry-02.svg",
+    "diamonds-01.svg", "luxury-watches-01.jpg", "luxury-watches-02.svg", "estate-jewelry-01.jpg",
     "coin-collections-01.svg", "bullion-01.svg", "currency-01.jpg", "coin-cases-01.svg", "store-interior-01.jpg",
   ];
 
