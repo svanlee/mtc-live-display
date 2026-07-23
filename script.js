@@ -389,10 +389,11 @@
     }
     if (!messages.length) return;
 
+    const dot = `<span class="ticker-item">•</span>`;
     function buildItems() {
-      return messages.map((msg) => `<span class="ticker-item">${msg}</span>`).join(`<span class="ticker-item">•</span>`);
+      return messages.map((msg) => `<span class="ticker-item">${msg}</span>`).join(dot);
     }
-    track.innerHTML = buildItems() + buildItems();
+    track.innerHTML = buildItems() + dot + buildItems();
 
     requestAnimationFrame(() => {
       const fullWidth = track.scrollWidth / 2;
