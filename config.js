@@ -39,7 +39,11 @@ window.MTC_CONFIG = {
     // centering crops out the interesting part of the photo.
     imagePosition: {
       "store-interior-01.jpg": "center 68%",
-      "rare-coins-05.jpg": "center top",
+    },
+    // Per-filename caption text color override, for photos with a light/white
+    // background where the default gold caption text is hard to read.
+    captionColor: {
+      "rare-coins-05.jpg": "#000000",
     },
   },
 

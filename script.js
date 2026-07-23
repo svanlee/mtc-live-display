@@ -249,6 +249,8 @@
     const caption = document.createElement("div");
     caption.className = "slide-caption";
     caption.textContent = captionFromFilename(src.split("/").pop());
+    const colorMap = (CFG.slideshow && CFG.slideshow.captionColor) || {};
+    if (colorMap[filename]) caption.style.color = colorMap[filename];
     div.appendChild(caption);
     return { el: div, kind: "image" };
   }
