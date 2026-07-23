@@ -5,7 +5,8 @@
       "id": "free-appraisals",
       "headline": "Free Appraisals",
       "subtext": "Bring in your gold, silver, or coins for a no-obligation quote — every day, walk-ins welcome.",
-      "badge": "EVERY DAY, NO OBLIGATION"
+      "badge": "EVERY DAY, NO OBLIGATION",
+      "image": "assets/promotions/free-appraisals.jpg"
     },
     {
       "id": "holiday-season",
