@@ -80,6 +80,6 @@ window.MTC_CONFIG = {
 
   offline: {
     showLastUpdatedLabel: true,
-    storageKey: "mtc_last_prices_v1",
+    storageKey: "mtc_last_prices_v2",
   },
 };

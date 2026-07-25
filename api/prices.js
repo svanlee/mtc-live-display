@@ -70,14 +70,26 @@
 
   const PROVIDERS = { goldapi: fetchFromGoldAPI, metalsdev: fetchFromMetalsDev, currentgold: fetchFromCurrentGold, demo: fetchFromDemo };
 
-  function applyPriceAdjustment(result) {
+  // Returns a NEW metal object with today's config's multiplier/rounding
+  // applied — never mutates the input, so raw fetched/cached data stays raw.
+  function adjustMetal(metal, key) {
+    if (!metal) return metal;
     const multiplier = cfg().priceMultiplier || {};
     const roundDown = cfg().roundDownToDollar || {};
-    if (result.gold) result.gold.price *= multiplier.gold ?? 1;
-    if (result.silver) result.silver.price *= multiplier.silver ?? 1;
-    if (result.gold && roundDown.gold) result.gold.price = Math.floor(result.gold.price);
-    if (result.silver && roundDown.silver) result.silver.price = Math.floor(result.silver.price);
-    return result;
+    let price = metal.price * (multiplier[key] ?? 1);
+    if (roundDown[key]) price = Math.floor(price);
+    return { ...metal, price };
+  }
+
+  // Applied at render time (not baked into what gets fetched/cached) so a
+  // formula change here takes effect immediately, even against a price that
+  // was cached under an older formula.
+  function applyPriceAdjustment(result) {
+    return {
+      ...result,
+      gold: adjustMetal(result.gold, "gold"),
+      silver: adjustMetal(result.silver, "silver"),
+    };
   }
 
   async function fetchPrices() {
@@ -85,10 +97,9 @@
     const providerFn = PROVIDERS[providerKey];
     if (!providerFn) throw new Error(`Unknown spot price provider "${providerKey}" in config.js`);
     const result = await providerFn();
-    applyPriceAdjustment(result);
     result.fetchedAt = new Date();
     return result;
   }
 
-  window.MTCPrices = { fetchPrices, PROVIDERS };
+  window.MTCPrices = { fetchPrices, applyPriceAdjustment, PROVIDERS };
 })();

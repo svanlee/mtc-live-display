@@ -144,8 +144,9 @@
     if (!isMarketOpen(now)) {
       const cached = loadFromCache();
       if (cached) {
-        renderMetal("gold", cached.gold);
-        renderMetal("silver", cached.silver);
+        const adjusted = window.MTCPrices.applyPriceAdjustment(cached);
+        renderMetal("gold", adjusted.gold);
+        renderMetal("silver", adjusted.silver);
         setLastUpdatedLabel(new Date(cached.fetchedAt), "closed");
       } else {
         setLastUpdatedLabel(now, "closed");
@@ -154,19 +155,21 @@
       return;
     }
     try {
-      const data = await window.MTCPrices.fetchPrices();
-      renderMetal("gold", data.gold);
-      renderMetal("silver", data.silver);
+      const data = await window.MTCPrices.fetchPrices(); // raw spot
+      const adjusted = window.MTCPrices.applyPriceAdjustment(data);
+      renderMetal("gold", adjusted.gold);
+      renderMetal("silver", adjusted.silver);
       runSweep();
       setLastUpdatedLabel(data.fetchedAt, null);
-      saveToCache({ gold: data.gold, silver: data.silver, fetchedAt: data.fetchedAt });
+      saveToCache({ gold: data.gold, silver: data.silver, fetchedAt: data.fetchedAt }); // cache raw, not adjusted
       scheduleNext(CFG.api.refreshIntervalSeconds);
     } catch (err) {
       console.error("Spot price fetch failed, falling back to cache:", err);
       const cached = loadFromCache();
       if (cached) {
-        renderMetal("gold", cached.gold);
-        renderMetal("silver", cached.silver);
+        const adjusted = window.MTCPrices.applyPriceAdjustment(cached);
+        renderMetal("gold", adjusted.gold);
+        renderMetal("silver", adjusted.silver);
         setLastUpdatedLabel(new Date(cached.fetchedAt), "offline");
       } else {
         setLastUpdatedLabel(new Date(), "offline");
