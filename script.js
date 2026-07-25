@@ -148,11 +148,12 @@
         renderMetal("gold", adjusted.gold);
         renderMetal("silver", adjusted.silver);
         setLastUpdatedLabel(new Date(cached.fetchedAt), "closed");
-      } else {
-        setLastUpdatedLabel(now, "closed");
+        scheduleNext(msUntilMarketOpen(now) / 1000);
+        return;
       }
-      scheduleNext(msUntilMarketOpen(now) / 1000);
-      return;
+      // No cache yet (first visit, or an old cache was just invalidated) —
+      // do one live fetch anyway so the board isn't left blank until the
+      // next market-hours window.
     }
     try {
       const data = await window.MTCPrices.fetchPrices(); // raw spot
