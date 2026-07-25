@@ -140,6 +140,60 @@
     } catch (e) { return null; }
   }
 
+  // ---- Daily base price (yesterday's last call = today's reference) ----
+  // Some providers (gold-api.com) don't report a daily % change, and relying
+  // on each provider's own figure would make the board's change% jump around
+  // whenever the fallback kicks in. Instead we track our own: the last
+  // successful raw price seen each day becomes the following day's fixed
+  // "base," and every render's % change is computed against that — same
+  // meaning ("change since prior close") no matter which provider answered.
+  function localDateStr(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  function loadLastSeen() {
+    try { const raw = localStorage.getItem("mtc_last_seen_v1"); return raw ? JSON.parse(raw) : null; }
+    catch (e) { return null; }
+  }
+  function saveLastSeen(entry) {
+    try { localStorage.setItem("mtc_last_seen_v1", JSON.stringify(entry)); }
+    catch (e) { console.warn("Unable to save last-seen prices:", e); }
+  }
+  function loadDailyBase() {
+    try { const raw = localStorage.getItem("mtc_daily_base_v1"); return raw ? JSON.parse(raw) : null; }
+    catch (e) { return null; }
+  }
+  function saveDailyBase(entry) {
+    try { localStorage.setItem("mtc_daily_base_v1", JSON.stringify(entry)); }
+    catch (e) { console.warn("Unable to save daily base prices:", e); }
+  }
+  // Returns today's { date, gold, silver } base, rolling over from
+  // yesterday's last-seen price the first time we're asked on a new day.
+  function getDailyBase(now) {
+    const today = localDateStr(now);
+    const existing = loadDailyBase();
+    if (existing && existing.date === today) return existing;
+    const lastSeen = loadLastSeen();
+    if (!lastSeen) return null;
+    const base = { date: today, gold: lastSeen.gold, silver: lastSeen.silver };
+    saveDailyBase(base);
+    return base;
+  }
+  function changeFromBase(price, basePrice) {
+    const changePercent = ((price - basePrice) / basePrice) * 100;
+    return { changePercent, direction: changePercent > 0 ? "up" : changePercent < 0 ? "down" : "flat" };
+  }
+  // Overrides each metal's changePercent/direction using our own daily base
+  // instead of whatever (if anything) the provider reported.
+  function withDailyChange(rawResult, now) {
+    const base = getDailyBase(now);
+    if (!base) return rawResult; // no history yet — keep provider's own figure
+    const apply = (metal, basePrice) => (metal ? { ...metal, ...changeFromBase(metal.price, basePrice) } : metal);
+    return { ...rawResult, gold: apply(rawResult.gold, base.gold), silver: apply(rawResult.silver, base.silver) };
+  }
+
   let priceTimer = null;
   function scheduleNext(seconds) {
     if (priceTimer) clearTimeout(priceTimer);
@@ -151,7 +205,8 @@
     if (!isMarketOpen(now)) {
       const cached = loadFromCache();
       if (cached) {
-        const shown = cached.legacy ? cached.data : window.MTCPrices.applyPriceAdjustment(cached.data);
+        const withChange = cached.legacy ? cached.data : withDailyChange(cached.data, now);
+        const shown = cached.legacy ? cached.data : window.MTCPrices.applyPriceAdjustment(withChange);
         renderMetal("gold", shown.gold);
         renderMetal("silver", shown.silver);
         setLastUpdatedLabel(new Date(cached.data.fetchedAt), "closed");
@@ -164,7 +219,9 @@
     }
     try {
       const data = await window.MTCPrices.fetchPrices(); // raw spot
-      const adjusted = window.MTCPrices.applyPriceAdjustment(data);
+      saveLastSeen({ date: localDateStr(now), gold: data.gold.price, silver: data.silver.price });
+      const withChange = withDailyChange(data, now);
+      const adjusted = window.MTCPrices.applyPriceAdjustment(withChange);
       renderMetal("gold", adjusted.gold);
       renderMetal("silver", adjusted.silver);
       runSweep();
@@ -175,7 +232,8 @@
       console.error("Spot price fetch failed, falling back to cache:", err);
       const cached = loadFromCache();
       if (cached) {
-        const shown = cached.legacy ? cached.data : window.MTCPrices.applyPriceAdjustment(cached.data);
+        const withChange = cached.legacy ? cached.data : withDailyChange(cached.data, now);
+        const shown = cached.legacy ? cached.data : window.MTCPrices.applyPriceAdjustment(withChange);
         renderMetal("gold", shown.gold);
         renderMetal("silver", shown.silver);
         setLastUpdatedLabel(new Date(cached.data.fetchedAt), "offline");

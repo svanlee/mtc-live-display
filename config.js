@@ -11,24 +11,21 @@ window.MTC_CONFIG = {
   },
 
   api: {
-    provider: "goldapi", // "demo" | "goldapi" | "goldapicom" | "metalsdev" | "currentgold"
-    // Tried in order if the primary provider fails (e.g. goldapi.io's
-    // 100-req/month free quota runs out before the month resets).
-    // gold-api.com is free and keyless, so it needs no credentials below.
-    fallbackProviders: ["goldapicom"],
+    // gold-api.com is primary: it's free, keyless, and has no documented
+    // rate limit. goldapi.io (100 req/month free cap) is the backup, tried
+    // only if the primary fails — so it should rarely get used at all, and
+    // its quota is there as a safety net rather than something we spend
+    // down every day.
+    provider: "goldapicom", // "demo" | "goldapi" | "goldapicom" | "metalsdev" | "currentgold"
+    fallbackProviders: ["goldapi"],
     goldapi: { apiKey: "goldapi-597e29075eb7cb7f0166ce8074455e96-io", baseUrl: "https://www.goldapi.io/api" },
     metalsdev: { apiKey: "YOUR_METALS_DEV_KEY", baseUrl: "https://api.metals.dev/v1" },
     currentgold: { apiKey: "YOUR_CURRENT_GOLD_KEY", baseUrl: "https://api.current.gold/v1" },
-    // goldapi.io's free plan is capped at 100 requests/month, and each
-    // refresh uses 2 (gold + silver). Every 3 hours during market hours
-    // keeps us comfortably under that for most of the month; once it runs
-    // out, fallbackProviders takes over automatically for the rest of the
-    // cycle. Raise this if we upgrade the goldapi.io plan.
-    refreshIntervalSeconds: 10800,
+    // Primary provider has no quota concern, so we can check often.
+    refreshIntervalSeconds: 600,
     // How long to wait before retrying after EVERY provider in the chain
-    // fails. Kept well above a few seconds so a real outage doesn't hammer
-    // (and burn quota on) the providers while they're down.
-    retryIntervalSeconds: 1800,
+    // fails (a real outage, not just goldapi.io's quota).
+    retryIntervalSeconds: 60,
     marketHours: { startHour: 9, endHour: 17 }, // 24h local time; refreshes only fetch live prices in this window
     // Percent of live spot price to display, so the board matches what we
     // actually buy/sell at instead of raw exchange spot. 1.0 = show raw spot.
