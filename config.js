@@ -18,8 +18,11 @@ window.MTC_CONFIG = {
     refreshIntervalSeconds: 1800,
     retryIntervalSeconds: 15,
     marketHours: { startHour: 9, endHour: 17 }, // 24h local time; refreshes only fetch live prices in this window
-    // Rounds the live spot price down to the nearest whole dollar before
-    // display, so the board matches what we actually buy/sell at.
+    // Dollar amount subtracted from the live spot price before display, so
+    // the board matches what we actually buy/sell at (spot often runs above
+    // our real price). Update these as the gap changes.
+    priceOffset: { gold: -26.15, silver: 0 },
+    // Rounds the (offset-adjusted) price down to the nearest whole dollar.
     roundDownToDollar: { gold: true, silver: true },
   },
 

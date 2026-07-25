@@ -71,7 +71,10 @@
   const PROVIDERS = { goldapi: fetchFromGoldAPI, metalsdev: fetchFromMetalsDev, currentgold: fetchFromCurrentGold, demo: fetchFromDemo };
 
   function applyPriceAdjustment(result) {
+    const offset = cfg().priceOffset || {};
     const roundDown = cfg().roundDownToDollar || {};
+    if (result.gold) result.gold.price += offset.gold ?? 0;
+    if (result.silver) result.silver.price += offset.silver ?? 0;
     if (result.gold && roundDown.gold) result.gold.price = Math.floor(result.gold.price);
     if (result.silver && roundDown.silver) result.silver.price = Math.floor(result.silver.price);
     return result;
