@@ -18,11 +18,9 @@ window.MTC_CONFIG = {
     refreshIntervalSeconds: 1800,
     retryIntervalSeconds: 15,
     marketHours: { startHour: 9, endHour: 17 }, // 24h local time; refreshes only fetch live prices in this window
-    // Percent of live spot price to display, matching our ScrapIt buy price
-    // (ScrapIt is configured with its own per-metal % of spot, same idea as
-    // this). 1.0 = show raw spot unchanged. Re-derive these if our ScrapIt
-    // margins ever change: multiplier = (ScrapIt price) / (spot price).
-    priceMultiplier: { gold: 0.9936, silver: 0.9847 },
+    // Percent of live spot price to display, so the board matches what we
+    // actually buy/sell at instead of raw exchange spot. 1.0 = show raw spot.
+    priceMultiplier: { gold: 0.99, silver: 0.99 },
     // Rounds the (multiplier-adjusted) price down to the nearest whole dollar.
     roundDownToDollar: { gold: true, silver: true },
   },
