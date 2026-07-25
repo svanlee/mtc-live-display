@@ -18,10 +18,9 @@ window.MTC_CONFIG = {
     refreshIntervalSeconds: 1800,
     retryIntervalSeconds: 15,
     marketHours: { startHour: 9, endHour: 17 }, // 24h local time; refreshes only fetch live prices in this window
-    // Multiplier applied to the live spot price before display, so the board
-    // matches what we actually buy/sell at instead of raw exchange spot.
-    // 1.0 = show raw spot unchanged. Update these as our pricing changes.
-    priceAdjustment: { gold: 1.0, silver: 0.9847 },
+    // Rounds the live spot price down to the nearest whole dollar before
+    // display, so the board matches what we actually buy/sell at.
+    roundDownToDollar: { gold: true, silver: true },
   },
 
   slideshow: {
