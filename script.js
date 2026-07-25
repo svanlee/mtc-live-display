@@ -126,10 +126,17 @@
     try { localStorage.setItem(CFG.offline.storageKey, JSON.stringify(data)); }
     catch (e) { console.warn("Unable to cache prices:", e); }
   }
+  // Returns { data, legacy }. `legacy` marks data saved under an older
+  // storage key (from before a pricing-formula change) that already has an
+  // old adjustment baked in — don't re-adjust it, just show it as a
+  // stopgap until a fresh live fetch succeeds.
   function loadFromCache() {
     try {
       const raw = localStorage.getItem(CFG.offline.storageKey);
-      return raw ? JSON.parse(raw) : null;
+      if (raw) return { data: JSON.parse(raw), legacy: false };
+      const legacyRaw = localStorage.getItem("mtc_last_prices_v1");
+      if (legacyRaw) return { data: JSON.parse(legacyRaw), legacy: true };
+      return null;
     } catch (e) { return null; }
   }
 
@@ -144,10 +151,10 @@
     if (!isMarketOpen(now)) {
       const cached = loadFromCache();
       if (cached) {
-        const adjusted = window.MTCPrices.applyPriceAdjustment(cached);
-        renderMetal("gold", adjusted.gold);
-        renderMetal("silver", adjusted.silver);
-        setLastUpdatedLabel(new Date(cached.fetchedAt), "closed");
+        const shown = cached.legacy ? cached.data : window.MTCPrices.applyPriceAdjustment(cached.data);
+        renderMetal("gold", shown.gold);
+        renderMetal("silver", shown.silver);
+        setLastUpdatedLabel(new Date(cached.data.fetchedAt), "closed");
         scheduleNext(msUntilMarketOpen(now) / 1000);
         return;
       }
@@ -168,10 +175,10 @@
       console.error("Spot price fetch failed, falling back to cache:", err);
       const cached = loadFromCache();
       if (cached) {
-        const adjusted = window.MTCPrices.applyPriceAdjustment(cached);
-        renderMetal("gold", adjusted.gold);
-        renderMetal("silver", adjusted.silver);
-        setLastUpdatedLabel(new Date(cached.fetchedAt), "offline");
+        const shown = cached.legacy ? cached.data : window.MTCPrices.applyPriceAdjustment(cached.data);
+        renderMetal("gold", shown.gold);
+        renderMetal("silver", shown.silver);
+        setLastUpdatedLabel(new Date(cached.data.fetchedAt), "offline");
       } else {
         setLastUpdatedLabel(new Date(), "offline");
       }
