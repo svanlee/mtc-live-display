@@ -28,6 +28,24 @@
     };
   }
 
+  // gold-api.com: free, keyless, no documented rate limit. Used as an
+  // automatic backup if goldapi.io's 100-req/month plan runs dry. It doesn't
+  // report a daily change percent, so that comes back flat (0%).
+  async function fetchFromGoldApiCom() {
+    const base = "https://api.gold-api.com/price";
+    const [goldRes, silverRes] = await Promise.all([
+      fetch(`${base}/XAU`),
+      fetch(`${base}/XAG`),
+    ]);
+    if (!goldRes.ok || !silverRes.ok) throw new Error("gold-api.com request failed");
+    const gold = await goldRes.json();
+    const silver = await silverRes.json();
+    return {
+      gold: { price: gold.price, changePercent: 0, direction: "flat" },
+      silver: { price: silver.price, changePercent: 0, direction: "flat" },
+    };
+  }
+
   async function fetchFromMetalsDev() {
     const { apiKey, baseUrl } = cfg().metalsdev;
     const res = await fetch(`${baseUrl}/latest?api_key=${apiKey}&currency=USD&unit=toz`);
@@ -68,7 +86,7 @@
     };
   }
 
-  const PROVIDERS = { goldapi: fetchFromGoldAPI, metalsdev: fetchFromMetalsDev, currentgold: fetchFromCurrentGold, demo: fetchFromDemo };
+  const PROVIDERS = { goldapi: fetchFromGoldAPI, goldapicom: fetchFromGoldApiCom, metalsdev: fetchFromMetalsDev, currentgold: fetchFromCurrentGold, demo: fetchFromDemo };
 
   // Returns a NEW metal object with today's config's multiplier/rounding
   // applied — never mutates the input, so raw fetched/cached data stays raw.
@@ -92,13 +110,30 @@
     };
   }
 
+  // Tries the primary provider, then each fallbackProviders entry in order,
+  // so a primary outage (e.g. goldapi.io's monthly quota running out)
+  // doesn't take the whole board down.
   async function fetchPrices() {
-    const providerKey = cfg().provider;
-    const providerFn = PROVIDERS[providerKey];
-    if (!providerFn) throw new Error(`Unknown spot price provider "${providerKey}" in config.js`);
-    const result = await providerFn();
-    result.fetchedAt = new Date();
-    return result;
+    const { provider, fallbackProviders } = cfg();
+    const chain = [provider, ...(fallbackProviders || [])];
+    let lastErr = new Error("No spot price provider configured");
+    for (const key of chain) {
+      const providerFn = PROVIDERS[key];
+      if (!providerFn) {
+        lastErr = new Error(`Unknown spot price provider "${key}" in config.js`);
+        continue;
+      }
+      try {
+        const result = await providerFn();
+        result.fetchedAt = new Date();
+        result.provider = key;
+        return result;
+      } catch (err) {
+        console.warn(`Spot price provider "${key}" failed, trying next:`, err);
+        lastErr = err;
+      }
+    }
+    throw lastErr;
   }
 
   window.MTCPrices = { fetchPrices, applyPriceAdjustment, PROVIDERS };
