@@ -70,11 +70,19 @@
 
   const PROVIDERS = { goldapi: fetchFromGoldAPI, metalsdev: fetchFromMetalsDev, currentgold: fetchFromCurrentGold, demo: fetchFromDemo };
 
+  function applyPriceAdjustment(result) {
+    const adjustment = cfg().priceAdjustment || {};
+    if (result.gold) result.gold.price *= adjustment.gold ?? 1;
+    if (result.silver) result.silver.price *= adjustment.silver ?? 1;
+    return result;
+  }
+
   async function fetchPrices() {
     const providerKey = cfg().provider;
     const providerFn = PROVIDERS[providerKey];
     if (!providerFn) throw new Error(`Unknown spot price provider "${providerKey}" in config.js`);
     const result = await providerFn();
+    applyPriceAdjustment(result);
     result.fetchedAt = new Date();
     return result;
   }
