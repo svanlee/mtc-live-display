@@ -522,12 +522,23 @@
   }
 
   // ---------------- BOOT ----------------
+  // Reloads the whole page periodically so a deployed fix or config change
+  // reaches this tab on its own — otherwise a kiosk tab left open
+  // indefinitely keeps running whatever JS was loaded when it was last
+  // opened, no matter what gets pushed to the site afterward.
+  function scheduleAutoReload() {
+    const hours = CFG.kiosk && CFG.kiosk.autoReloadHours;
+    if (!hours) return;
+    setTimeout(() => location.reload(), hours * 60 * 60 * 1000);
+  }
+
   function boot() {
     applyBranding();
     startClock();
     refreshPrices();
     startSlideshow();
     startTicker();
+    scheduleAutoReload();
     window.addEventListener("online", () => refreshPrices());
   }
 

@@ -132,4 +132,13 @@ window.MTC_CONFIG = {
     showLastUpdatedLabel: true,
     storageKey: "mtc_last_prices_v2",
   },
+
+  kiosk: {
+    // This runs as a browser tab left open indefinitely, so a code/config
+    // update pushed to the site otherwise never reaches it until someone
+    // physically reloads the page. Auto-reloading periodically means every
+    // fix goes live on its own within a few hours instead of needing a
+    // manual refresh each time.
+    autoReloadHours: 3,
+  },
 };
