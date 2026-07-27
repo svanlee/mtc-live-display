@@ -252,7 +252,7 @@
     "luxury-watches-01.jpg", "luxury-watches-02.jpg", "luxury-watches-03.jpg", "estate-jewelry-01.jpg",
     "coin-collections-01.jpg", "coin-collections-02.jpg", "coin-collections-03.jpg", "coin-collections-04.jpg", "store-interior-02.jpg", "store-interior-03.jpg", "store-interior-04.jpg", "store-interior-05.jpg", "firearms-01.jpg",
     "antiques-01.jpg", "antiques-02.jpg", "antiques-03.jpg", "antiques-04.jpg", "antiques-05.jpg", "antiques-06.jpg", "antiques-07.jpg",
-    "cameras-01.jpg", "cameras-02.jpg", "cameras-03.jpg", "cameras-04.jpg", "cameras-05.jpg", "cameras-06.jpg", "cameras-07.jpg",
+    "cameras-01.jpg", "cameras-02.jpg", "cameras-03.jpg", "cameras-04.jpg", "cameras-05.jpg", "cameras-06.jpg",
     "purses-01.jpg", "purses-02.jpg", "purses-03.jpg", "purses-04.jpg",
   ];
 
