@@ -140,60 +140,76 @@
     } catch (e) { return null; }
   }
 
-  // ---- Rolling baseline for the change% arrow ----
+  // ---- True rolling 30-day baseline for the change% arrow ----
   // Some providers (gold-api.com) don't report a daily % change, and relying
   // on each provider's own figure would make the board's change% jump around
-  // whenever the fallback kicks in. Instead we track our own: the price is
-  // compared against a fixed "base" that only rolls forward once every
-  // CHANGE_BASELINE_DAYS days, so the arrow/percent reflects the move over
-  // that whole window instead of just since the last check.
-  const CHANGE_BASELINE_DAYS = 30;
+  // whenever the fallback kicks in. Instead we keep our own daily history —
+  // one raw price per calendar day — and always compare today's price
+  // against whichever entry sits closest to exactly ROLLING_WINDOW_DAYS ago.
+  // That's a real rolling window: every day the comparison point advances
+  // by one day too, always "about a month back," not a fixed point that
+  // only refreshes periodically.
+  const ROLLING_WINDOW_DAYS = 30;
+  const HISTORY_RETENTION_DAYS = ROLLING_WINDOW_DAYS + 10; // small buffer for gaps
+  const HISTORY_KEY = "mtc_price_history_v1";
+
   function localDateStr(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
     const d = String(date.getDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   }
-  function daysSince(dateStr, now) {
-    const then = new Date(dateStr + "T00:00:00");
-    return Math.floor((now - then) / (24 * 60 * 60 * 1000));
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      const history = raw ? JSON.parse(raw) : [];
+      return Array.isArray(history) ? history : [];
+    } catch (e) { return []; }
   }
-  function loadLastSeen() {
-    try { const raw = localStorage.getItem("mtc_last_seen_v1"); return raw ? JSON.parse(raw) : null; }
-    catch (e) { return null; }
+  function saveHistory(history) {
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
+    catch (e) { console.warn("Unable to save price history:", e); }
   }
-  function saveLastSeen(entry) {
-    try { localStorage.setItem("mtc_last_seen_v1", JSON.stringify(entry)); }
-    catch (e) { console.warn("Unable to save last-seen prices:", e); }
+  // Records today's price (once per day; later calls the same day just
+  // update that day's entry with the latest value) and prunes anything
+  // older than we'll ever need.
+  function recordHistory(now, gold, silver) {
+    const today = localDateStr(now);
+    let history = loadHistory();
+    const idx = history.findIndex((h) => h.date === today);
+    if (idx >= 0) history[idx] = { date: today, gold, silver };
+    else history.push({ date: today, gold, silver });
+    const cutoff = new Date(now);
+    cutoff.setDate(cutoff.getDate() - HISTORY_RETENTION_DAYS);
+    history = history.filter((h) => new Date(h.date + "T00:00:00") >= cutoff);
+    history.sort((a, b) => a.date.localeCompare(b.date));
+    saveHistory(history);
+    return history;
   }
-  function loadDailyBase() {
-    try { const raw = localStorage.getItem("mtc_daily_base_v1"); return raw ? JSON.parse(raw) : null; }
-    catch (e) { return null; }
-  }
-  function saveDailyBase(entry) {
-    try { localStorage.setItem("mtc_daily_base_v1", JSON.stringify(entry)); }
-    catch (e) { console.warn("Unable to save daily base prices:", e); }
-  }
-  // Returns the current { date, gold, silver } base, rolling forward to the
-  // most recently seen price once CHANGE_BASELINE_DAYS have elapsed since
-  // the base was last set.
-  function getDailyBase(now) {
-    const existing = loadDailyBase() || CFG.api.initialBaseline || null;
-    if (existing && daysSince(existing.date, now) <= CHANGE_BASELINE_DAYS) return existing;
-    const lastSeen = loadLastSeen();
-    if (!lastSeen) return existing || null;
-    const base = { date: localDateStr(now), gold: lastSeen.gold, silver: lastSeen.silver };
-    saveDailyBase(base);
-    return base;
+  // Finds the history entry closest to (now - windowDays). Falls back to
+  // the nearest entry available if there's a gap (e.g. the display was off
+  // that day), so a missing single day doesn't break the comparison.
+  function findBaseline(history, now, windowDays) {
+    if (!history.length) return null;
+    const target = new Date(now);
+    target.setDate(target.getDate() - windowDays);
+    let best = null, bestDist = Infinity;
+    for (const h of history) {
+      const dist = Math.abs(new Date(h.date + "T00:00:00") - target);
+      if (dist < bestDist) { bestDist = dist; best = h; }
+    }
+    return best;
   }
   function changeFromBase(price, basePrice) {
     const changePercent = ((price - basePrice) / basePrice) * 100;
     return { changePercent, direction: changePercent > 0 ? "up" : changePercent < 0 ? "down" : "flat" };
   }
   // Overrides each metal's changePercent/direction using our own rolling
-  // baseline instead of whatever (if anything) the provider reported.
+  // 30-day history instead of whatever (if anything) the provider reported.
   function withDailyChange(rawResult, now) {
-    const base = getDailyBase(now);
+    let history = loadHistory();
+    if (!history.length && CFG.api.seedHistory) history = CFG.api.seedHistory;
+    const base = findBaseline(history, now, ROLLING_WINDOW_DAYS);
     if (!base) return rawResult; // no history yet — keep provider's own figure
     const apply = (metal, basePrice) => (metal ? { ...metal, ...changeFromBase(metal.price, basePrice) } : metal);
     return { ...rawResult, gold: apply(rawResult.gold, base.gold), silver: apply(rawResult.silver, base.silver) };
@@ -224,7 +240,7 @@
     }
     try {
       const data = await window.MTCPrices.fetchPrices(); // raw spot
-      saveLastSeen({ date: localDateStr(now), gold: data.gold.price, silver: data.silver.price });
+      recordHistory(now, data.gold.price, data.silver.price);
       const withChange = withDailyChange(data, now);
       const adjusted = window.MTCPrices.applyPriceAdjustment(withChange);
       renderMetal("gold", adjusted.gold);

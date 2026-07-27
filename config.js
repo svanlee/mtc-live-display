@@ -32,13 +32,13 @@ window.MTC_CONFIG = {
     priceMultiplier: { gold: 0.995, silver: 0.99 },
     // Rounds the (multiplier-adjusted) price down to the nearest whole dollar.
     roundDownToDollar: { gold: true, silver: true },
-    // Seeds the change%/arrow baseline on a device that has never stored one
-    // (e.g. first load, or cleared browser data), using real historical raw
-    // spot prices from roughly a month before this was set, so the board
-    // shows a real trailing-month change immediately instead of starting
-    // near 0%. Once a device has its own stored baseline, this is ignored;
-    // it only fills the gap before that exists.
-    initialBaseline: { date: "2026-06-27", gold: 4013, silver: 58.04 },
+    // Seeds the rolling 30-day price history on a device that has never
+    // stored any (e.g. first load, or cleared browser data), using a real
+    // historical raw spot price from roughly a month before this was set,
+    // so today's change% reflects an actual month-ago price instead of
+    // starting near 0%. Once a device records its own daily history, this
+    // seed is ignored — it only fills the gap before real history exists.
+    seedHistory: [{ date: "2026-06-27", gold: 4013, silver: 58.04 }],
   },
 
   slideshow: {
