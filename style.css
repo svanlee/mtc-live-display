@@ -70,6 +70,7 @@ html, body {
 .metal-change.up { color: #3fb950; }
 .metal-change.down { color: #f85149; }
 .metal-change.flat { color: var(--silver); }
+.metal-change-caption { font-size: clamp(0.55rem, 0.7vw, 0.75rem); letter-spacing: 0.15em; text-transform: uppercase; color: var(--silver); opacity: 0.45; margin-top: 0.2em; }
 .metal-price.flash { animation: priceFlash 0.9s ease-out; }
 @keyframes priceFlash { 0% { text-shadow: 0 0 0 rgba(212,175,55,0);} 20% { text-shadow: 0 0 26px currentColor; } 100% { text-shadow: 0 0 0 rgba(212,175,55,0);} }
 .sweep-line { position: absolute; bottom: 0.4em; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transform-origin: center; opacity: 0.8; }
