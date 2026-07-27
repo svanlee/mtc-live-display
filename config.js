@@ -89,7 +89,7 @@ window.MTC_CONFIG = {
     fillScreenImages: [
       "estate-jewelry-01.jpg", "jewelry-01.jpg", "rare-coins-04.jpg",
       "silver-bars-01.jpg", "coin-collections-01.jpg", "coin-collections-02.jpg", "coin-collections-03.jpg", "coin-collections-04.jpg",
-      "firearms-01.jpg",
+      "firearms-01.jpg", "luxury-watches-02.jpg",
     ],
     // Per-filename background-position override for fill-screen images, when
     // centering crops out the interesting part of the photo.
