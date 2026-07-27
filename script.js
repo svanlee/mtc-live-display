@@ -216,11 +216,22 @@
     const changePercent = ((price - basePrice) / basePrice) * 100;
     return { changePercent, direction: changePercent > 0 ? "up" : changePercent < 0 ? "down" : "flat" };
   }
+  // Merges the config seed with whatever real history has been recorded so
+  // far (real entries win on any date they share with the seed). Always
+  // merging — rather than only falling back to the seed when history is
+  // completely empty — matters once a handful of real days exist: without
+  // the older seed dates still in the mix, a lookup ~30 days back would
+  // have nothing to land on but today's own just-recorded price.
+  function mergedHistory() {
+    const byDate = {};
+    for (const h of CFG.api.seedHistory || []) byDate[h.date] = h;
+    for (const h of loadHistory()) byDate[h.date] = h;
+    return Object.values(byDate);
+  }
   // Overrides each metal's changePercent/direction using our own rolling
   // 30-day history instead of whatever (if anything) the provider reported.
   function withDailyChange(rawResult, now) {
-    let history = loadHistory();
-    if (!history.length && CFG.api.seedHistory) history = CFG.api.seedHistory;
+    const history = mergedHistory();
     const base = findBaseline(history, now, ROLLING_WINDOW_DAYS);
     if (!base) return rawResult; // no history yet — keep provider's own figure
     const apply = (metal, basePrice) => (metal ? { ...metal, ...changeFromBase(metal.price, basePrice) } : metal);
