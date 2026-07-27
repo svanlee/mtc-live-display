@@ -252,8 +252,11 @@
     }
     try {
       const data = await window.MTCPrices.fetchPrices(); // raw spot
-      recordHistory(now, data.gold.price, data.silver.price);
+      // Compute the change% against whatever history already existed BEFORE
+      // recording today's price — otherwise today's own price would already
+      // be in history and could get picked as its own baseline (0% change).
       const withChange = withDailyChange(data, now);
+      recordHistory(now, data.gold.price, data.silver.price);
       const adjusted = window.MTCPrices.applyPriceAdjustment(withChange);
       renderMetal("gold", adjusted.gold);
       renderMetal("silver", adjusted.silver);
