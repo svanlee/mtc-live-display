@@ -108,17 +108,29 @@
     }
   }
 
+  // marketHours is evaluated in US Eastern time (where gold/silver actually
+  // trade/close), not the display's local time zone, so "5pm" always means
+  // the real market close no matter where the board is physically running.
+  function easternHour(date) {
+    return parseInt(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "2-digit", hour12: false }).format(date), 10) % 24;
+  }
   function isMarketOpen(date) {
     const { startHour, endHour } = CFG.api.marketHours;
-    const hour = date.getHours();
+    const hour = easternHour(date);
     return hour >= startHour && hour < endHour;
   }
 
   function msUntilMarketOpen(date) {
     const { startHour } = CFG.api.marketHours;
-    const next = new Date(date);
-    next.setHours(startHour, 0, 0, 0);
-    if (next <= date) next.setDate(next.getDate() + 1);
+    // Find the next moment whose Eastern-time hour is startHour, by walking
+    // forward in hour-sized steps (safe across the ET/local DST offset,
+    // which can differ from the display's own time zone).
+    let next = new Date(date);
+    next.setMinutes(0, 0, 0);
+    for (let i = 0; i < 48; i++) {
+      next = new Date(next.getTime() + 60 * 60 * 1000);
+      if (next > date && easternHour(next) === startHour) break;
+    }
     return next.getTime() - date.getTime();
   }
 

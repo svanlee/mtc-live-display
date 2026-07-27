@@ -33,12 +33,46 @@ window.MTC_CONFIG = {
     // Rounds the (multiplier-adjusted) price down to the nearest whole dollar.
     roundDownToDollar: { gold: true, silver: true },
     // Seeds the rolling 30-day price history on a device that has never
-    // stored any (e.g. first load, or cleared browser data), using a real
-    // historical raw spot price from roughly a month before this was set,
-    // so today's change% reflects an actual month-ago price instead of
-    // starting near 0%. Once a device records its own daily history, this
-    // seed is ignored — it only fills the gap before real history exists.
-    seedHistory: [{ date: "2026-06-27", gold: 4013, silver: 58.04 }],
+    // stored any (e.g. first load, or cleared browser data), using real
+    // historical daily spot prices (gathered from public market reports,
+    // interpolated between confirmed reference points) covering the month
+    // before this was set, so today's change% reflects actual price
+    // movement instead of starting near 0%. Once a device records its own
+    // daily history, this seed is ignored — it only fills the gap before
+    // real history exists.
+    seedHistory: [
+      { date: "2026-06-27", gold: 4013.0, silver: 58.04 },
+      { date: "2026-06-28", gold: 4013.52, silver: 58.18 },
+      { date: "2026-06-29", gold: 4014.04, silver: 58.31 },
+      { date: "2026-06-30", gold: 4014.56, silver: 58.45 },
+      { date: "2026-07-01", gold: 4020.0, silver: 58.74 },
+      { date: "2026-07-02", gold: 4044.6, silver: 59.39 },
+      { date: "2026-07-03", gold: 4069.2, silver: 60.04 },
+      { date: "2026-07-04", gold: 4093.8, silver: 60.7 },
+      { date: "2026-07-05", gold: 4118.4, silver: 61.35 },
+      { date: "2026-07-06", gold: 4143.0, silver: 62.0 },
+      { date: "2026-07-07", gold: 4166.0, silver: 61.36 },
+      { date: "2026-07-08", gold: 4139.0, silver: 58.8 },
+      { date: "2026-07-09", gold: 4112.0, silver: 59.04 },
+      { date: "2026-07-10", gold: 4100.5, silver: 58.92 },
+      { date: "2026-07-11", gold: 4089.0, silver: 58.8 },
+      { date: "2026-07-12", gold: 4077.5, silver: 58.67 },
+      { date: "2026-07-13", gold: 4066.0, silver: 58.55 },
+      { date: "2026-07-14", gold: 4074.0, silver: 58.04 },
+      { date: "2026-07-15", gold: 4033.0, silver: 57.53 },
+      { date: "2026-07-16", gold: 3992.0, silver: 57.02 },
+      { date: "2026-07-17", gold: 3996.5, silver: 57.0 },
+      { date: "2026-07-18", gold: 4001.0, silver: 56.97 },
+      { date: "2026-07-19", gold: 4005.5, silver: 56.95 },
+      { date: "2026-07-20", gold: 4010.0, silver: 56.92 },
+      { date: "2026-07-21", gold: 4054.0, silver: 57.5 },
+      { date: "2026-07-22", gold: 4053.5, silver: 58.09 },
+      { date: "2026-07-23", gold: 4053.0, silver: 58.67 },
+      { date: "2026-07-24", gold: 4055.82, silver: 58.9 },
+      { date: "2026-07-25", gold: 4069.21, silver: 59.03 },
+      { date: "2026-07-26", gold: 4082.61, silver: 59.17 },
+      { date: "2026-07-27", gold: 4096.0, silver: 59.3 },
+    ],
   },
 
   slideshow: {
