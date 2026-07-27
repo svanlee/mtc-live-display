@@ -29,7 +29,7 @@ window.MTC_CONFIG = {
     marketHours: { startHour: 9, endHour: 17 }, // 24h local time; refreshes only fetch live prices in this window
     // Percent of live spot price to display, so the board matches what we
     // actually buy/sell at instead of raw exchange spot. 1.0 = show raw spot.
-    priceMultiplier: { gold: 0.995, silver: 0.995 },
+    priceMultiplier: { gold: 0.9975, silver: 0.995 },
     // Rounds the (multiplier-adjusted) price down to the nearest whole dollar.
     roundDownToDollar: { gold: true, silver: true },
     // Seeds the rolling 30-day price history on a device that has never
