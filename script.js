@@ -178,8 +178,8 @@
   // most recently seen price once CHANGE_BASELINE_DAYS have elapsed since
   // the base was last set.
   function getDailyBase(now) {
-    const existing = loadDailyBase();
-    if (existing && daysSince(existing.date, now) < CHANGE_BASELINE_DAYS) return existing;
+    const existing = loadDailyBase() || CFG.api.initialBaseline || null;
+    if (existing && daysSince(existing.date, now) <= CHANGE_BASELINE_DAYS) return existing;
     const lastSeen = loadLastSeen();
     if (!lastSeen) return existing || null;
     const base = { date: localDateStr(now), gold: lastSeen.gold, silver: lastSeen.silver };
